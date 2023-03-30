@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json.schemastore.org/package",
+  "name": "broumt",
+  "description": "📦 A lightweight, fast and efficient cache",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "test": "vitest test --dir \"./test/\"",
+    "lint": "eslint --ext .ts \"./\"",
+    "format": "eslint --fix --ext .ts \"./\"",
+    "build": "tsc --project \"./\""
+  },
+  "main": "./dist/src/index.js",
+  "types": "./typings/src/index.d.ts",
+  "files": [
+    "./dist/",
+    "./typings/"
+  ],
+  "directories": {
+    "lib": "./dist/src/",
+    "test": "./dist/test/",
+    "bench": "./dist/bench/"
+  },
+  "author": {
+    "name": "theNooden",
+    "email": "the.nooden@gmail.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/theNooden/broumt.git"
+  },
+  "bugs": {
+    "url": "https://github.com/theNooden/broumt/issues"
+  },
+  "keywords": [
+    "node",
+    "bun",
+    "cache"
+  ],
+  "engines": {
+    "node": ">=18.*"
+  },
+  "devDependencies": {
+    "@types/node": "18.15.*",
+    "@typescript-eslint/eslint-plugin": "^5.57.0",
+    "@typescript-eslint/parser": "^5.57.0",
+    "eslint": "^8.37.0",
+    "eslint-config-standard-with-typescript": "^34.0.1",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-n": "^15.0.0",
+    "eslint-plugin-promise": "^6.0.0",
+    "typescript": "^5.0.2"
+  }
+}
