@@ -1,0 +1,64 @@
+name: 'Check'
+
+on:
+
+  push:
+
+    branches:
+
+      - 'main'
+
+  pull_request:
+
+    branches:
+
+      - 'main'
+
+    types:
+
+      - 'opened'
+      - 'reopened'
+      - 'synchronize'
+
+jobs:
+
+  redundancy:
+
+    name:    'Redundancy'
+    runs-on: 'ubuntu-latest'
+
+    steps:
+
+      - name: 'Stopping previous checks'
+        uses: 'styfle/cancel-workflow-action@0.9.1'
+
+        with:
+
+          access_token: '${{ github.token }}'
+
+  code:
+
+    name:    'Code'
+    runs-on: 'ubuntu-latest'
+
+    steps:
+
+      - name: 'Importing project'
+        uses: 'actions/checkout@v3'
+
+        with:
+
+          fetch-depth: 0
+
+      - name: 'Installing node'
+        uses: 'actions/setup-node@v3'
+
+        with:
+
+          node-version: '18'
+
+      - name: 'Installing dependencies'
+        run:  'npm install --no-audit --no-fund --no-package-lock'
+
+      - name: 'Checking code style'
+        run:  'npm run lint'
