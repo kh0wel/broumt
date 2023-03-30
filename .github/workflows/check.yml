@@ -27,6 +27,10 @@ jobs:
     name:    'Redundancy'
     runs-on: 'ubuntu-latest'
 
+    permissions:
+
+      actions: 'write'
+
     steps:
 
       - name: 'Stopping previous checks'
