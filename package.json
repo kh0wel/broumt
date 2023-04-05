@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/package",
   "name": "broumt",
   "description": "📦 A small and efficient cache",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "type": "module",
   "private": false,
   "scripts": {
@@ -32,6 +32,7 @@
     "url": "https://github.com/theNooden/broumt/issues"
   },
   "keywords": [
+    "experiment",
     "cache"
   ],
   "engines": {
