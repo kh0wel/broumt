@@ -2,13 +2,13 @@
   "$schema": "https://json.schemastore.org/package",
   "name": "broumt",
   "description": "📦 A small and efficient cache",
-  "version": "1.1.3",
+  "version": "1.1.4",
   "type": "module",
   "private": false,
   "scripts": {
-    "lint": "eslint --ext .ts \"./\"",
-    "format": "eslint --fix --ext .ts \"./\"",
-    "build": "tsc --project \"./\""
+    "lint": "eslint --ext .ts \".\"",
+    "format": "eslint --fix --ext .ts \".\"",
+    "build": "tsc --project \".\""
   },
   "main": "./dist/structures/Cache.js",
   "types": "./typings/structures/Cache.d.ts",
