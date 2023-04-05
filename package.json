@@ -2,7 +2,7 @@
   "$schema": "https://json.schemastore.org/package",
   "name": "broumt",
   "description": "📦 A small and efficient cache",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "type": "module",
   "private": false,
   "scripts": {
@@ -38,7 +38,7 @@
     "node": ">=18.*"
   },
   "devDependencies": {
-    "@types/node": "18.15.*",
+    "@types/node": "18.*",
     "@typescript-eslint/eslint-plugin": "^5.57.0",
     "@typescript-eslint/parser": "^5.57.0",
     "eslint": "^8.37.0",

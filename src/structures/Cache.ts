@@ -15,12 +15,7 @@ export default class {
 
     hasher = hashAlgorithm;
 
-    constructor (options?: {
-
-        hasher?: typeof hashAlgorithm,
-
-        cache?: { pointers: any, containers: any }
-    }) {
+    constructor (options?: { hasher?: typeof hashAlgorithm, cache?: { pointers: any, containers: any } }) {
 
         this.hasher     = options?.hasher            ?? this.hasher;
         this.pointers   = options?.cache?.pointers   ?? this.pointers;
@@ -41,7 +36,7 @@ export default class {
         &&  typeof value !== 'boolean'
         &&  typeof value !== 'undefined') throw new Error('Invalid entry value');
 
-        const currentContainerHash = hashAlgorithm(value);
+        const currentContainerHash = this.hasher(value);
 
         const currentContainerData: CachedContainer = this.containers.get(currentContainerHash) ?? { value, usedBy: 0 };
 
