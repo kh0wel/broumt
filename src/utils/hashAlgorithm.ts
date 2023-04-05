@@ -1,6 +1,6 @@
 export default function (value: any) {
 
-    const hasher = (characters: string) => {
+    const create = (characters: string) => {
 
         const base = 13;
 
@@ -18,13 +18,13 @@ export default function (value: any) {
 
         typeof value === 'string'
 
-            ? hasher(value)
+            ? create(value)
 
             : typeof value === 'symbol'
 
                 ? value.description
 
-                    ? hasher(value.description)
+                    ? create(value.description)
 
                     : 'none'
 
@@ -36,7 +36,7 @@ export default function (value: any) {
 
                         ? 'none'
 
-                        : hasher(value.toString())
+                        : create(value.toString())
     }`
         .toUpperCase();
 };

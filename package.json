@@ -1,17 +1,17 @@
 {
   "$schema": "https://json.schemastore.org/package",
   "name": "broumt",
-  "description": "📦 A lightweight, fast and efficient cache",
-  "version": "1.0.1",
+  "description": "📦 A small and efficient cache",
+  "version": "1.1.0",
   "type": "module",
+  "private": false,
   "scripts": {
-    "test": "vitest test --dir \"./test/\"",
     "lint": "eslint --ext .ts \"./\"",
     "format": "eslint --fix --ext .ts \"./\"",
     "build": "tsc --project \"./\""
   },
-  "main": "./dist/index.js",
-  "types": "./typings/index.d.ts",
+  "main": "./dist/structures/Cache.js",
+  "types": "./typings/structures/Cache.d.ts",
   "files": [
     "./dist/",
     "./typings/"
@@ -32,8 +32,6 @@
     "url": "https://github.com/theNooden/broumt/issues"
   },
   "keywords": [
-    "node",
-    "bun",
     "cache"
   ],
   "engines": {
