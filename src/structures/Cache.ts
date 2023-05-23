@@ -1,6 +1,6 @@
 import hashAlgorithm from '../utils/hashAlgorithm.js';
 
-export type CachedKey = string | number | symbol | bigint;
+export type CachedKey = string | number | symbol;
 
 export type CachedValue = string | number | symbol | bigint | boolean | undefined;
 
@@ -10,23 +10,13 @@ export type CachedContainer = { value: CachedValue, usedBy: number };
 
 export default class {
 
-    pointers:   Map<CachedKey, CachedPointer>       = new Map();
-    containers: Map<CachedPointer, CachedContainer> = new Map();
-
-    hasher = hashAlgorithm;
-
-    constructor (options?: { hasher?: typeof hashAlgorithm, cache?: { pointers: any, containers: any } }) {
-
-        this.hasher     = options?.hasher            ?? this.hasher;
-        this.pointers   = options?.cache?.pointers   ?? this.pointers;
-        this.containers = options?.cache?.containers ?? this.containers;
-    };
+    pointers:   { [pointer:   CachedKey     ]: CachedPointer   } = {};
+    containers: { [container: CachedPointer ]: CachedContainer } = {};
 
     set (key: CachedKey, value: CachedValue) {
 
         if (typeof key !== 'string'
         &&  typeof key !== 'number'
-        &&  typeof key !== 'bigint'
         &&  typeof key !== 'symbol') throw new Error('Invalid entry key');
 
         if (typeof value !== 'string'
@@ -36,36 +26,35 @@ export default class {
         &&  typeof value !== 'boolean'
         &&  typeof value !== 'undefined') throw new Error('Invalid entry value');
 
-        const currentContainerHash = this.hasher(value);
+        const currentContainerHash = hashAlgorithm(value);
 
-        const currentContainerData: CachedContainer = this.containers.get(currentContainerHash) ?? { value, usedBy: 0 };
+        const currentContainerData: CachedContainer = this.containers[currentContainerHash] ?? { value, usedBy: 0 };
 
         currentContainerData.usedBy++;
 
-        const previousContainerHash = this.pointers.get(key);
+        const previousContainerHash = this.pointers[key];
 
         // Verifica si el contenedor anterior del puntero existente es el mismo
         if (previousContainerHash
         &&  previousContainerHash !== currentContainerHash) {
 
             // Obtiene el antiguo contenedor utilizado por el puntero
-            const previousContainerData = this.containers.get(previousContainerHash) as CachedContainer;
+            const previousContainerData = this.containers[previousContainerHash] as CachedContainer;
 
             previousContainerData.usedBy--;
 
             // Elimina el contenedor si ya no es utilizado
-            if (!previousContainerData.usedBy) this.containers.delete(previousContainerHash);
+            if (!previousContainerData.usedBy) delete this.pointers[key];
         };
 
-        this.pointers.set(key, currentContainerHash);
-        this.containers.set(currentContainerHash, currentContainerData);
+        this.pointers[key]                    = currentContainerHash;
+        this.containers[currentContainerHash] = currentContainerData;
     };
 
     clone (from: CachedKey, to: CachedKey) {
 
         if (typeof from !== 'string'
         &&  typeof from !== 'number'
-        &&  typeof from !== 'bigint'
         &&  typeof from !== 'symbol'
 
         &&  typeof to   !== 'string'
@@ -73,142 +62,75 @@ export default class {
         &&  typeof to   !== 'bigint'
         &&  typeof to   !== 'symbol')  throw new Error('Invalid entry key');
 
-        const containerHash = this.pointers.get(from);
+        const containerHash = this.pointers[from];
 
-        // Verifica si el puntero existe
-        if (!containerHash) return;
-
-        const containerData = this.containers.get(containerHash) as CachedContainer;
+        const containerData = this.containers[containerHash] as CachedContainer;
 
         containerData.usedBy++;
 
-        this.pointers.set(to, containerHash);
-        this.containers.set(containerHash, containerData);
+        this.pointers[to]              = containerHash;
+        this.containers[containerHash] = containerData;
     };
 
     delete (key: CachedKey) {
 
         if (typeof key !== 'string'
         &&  typeof key !== 'number'
-        &&  typeof key !== 'bigint'
         &&  typeof key !== 'symbol') throw new Error('Invalid entry key');
 
-        const containerHash = this.pointers.get(key);
+        const containerHash = this.pointers[key];
 
-        // Verifica si el puntero existe
-        if (!containerHash) return;
+        const containerData = this.containers[containerHash] as CachedContainer;
 
-        this.pointers.delete(key);
-
-        const containerData = this.containers.get(containerHash) as CachedContainer;
+        delete this.pointers[key];
 
         containerData.usedBy--;
 
         // Elimina el contenedor si ya no es utilizado o lo actualiza
-        if   (!containerData.usedBy) this.containers.delete(containerHash);
-        else                         this.containers.set(containerHash, containerData);
+        if   (!containerData.usedBy) delete this.containers[containerHash];
+        else                                this.containers[containerHash] = containerData;
     };
 
     get (key: CachedKey) {
 
         if (typeof key !== 'string'
         &&  typeof key !== 'number'
-        &&  typeof key !== 'bigint'
         &&  typeof key !== 'symbol') throw new Error('Invalid entry key');
 
-        const containerHash = this.pointers.get(key);
+        const containerHash = this.pointers[key];
 
-        // Verifica si el puntero existe
-        if (!containerHash) return null;
-
-        const containerData = this.containers.get(containerHash) as CachedContainer;
-
-        return containerData.value;
+        return this.containers[containerHash]?.value as CachedValue ?? null;
     };
 
     has (key: CachedKey) {
 
         if (typeof key !== 'string'
         &&  typeof key !== 'number'
-        &&  typeof key !== 'bigint'
         &&  typeof key !== 'symbol') throw new Error('Invalid entry key');
 
-        const containerHash = this.pointers.get(key);
+        const containerHash = this.pointers[key];
 
-        // Verifica si el puntero existe
-        if (!containerHash) return false;
-
-        return this.containers.has(containerHash);
+        return !!containerHash;
     };
 
     entries () {
 
-        const data = new Array(this.pointers.size);
-
-        let index = 0;
-
-        for (const [ key, containerHash ] of this.pointers) {
-
-            const containerData = this.containers.get(containerHash) as CachedContainer;
-
-            data[index] = [ key, containerData.value ];
-
-            index++;
-        };
-
-        return data;
+        return Object.entries(this.pointers).map(([ key, pointer ]) => [ key, this.containers[pointer] ]);
     };
 
     keys () {
 
-        const data = new Array(this.pointers.size);
-
-        let index = 0;
-
-        for (const [ key ] of this.pointers) {
-
-            data[index] = key;
-
-            index++;
-        };
-
-        return data;
+        return Object.keys(this.pointers);
     };
 
     values () {
 
-        const data = new Array(this.containers.size);
-
-        let index = 0;
-
-        for (const [ , containerData ] of this.containers) {
-
-            data[index] = containerData.value;
-
-            index++;
-        };
-
-        return data;
+        return Object.values(this.containers);
     };
 
     clear () {
 
-        this.pointers.clear();
-        this.containers.clear();
-    };
-
-    data () {
-
-        return {
-
-            pointers:   this.pointers,
-            containers: this.containers
-        };
-    };
-
-    size () {
-
-        return this.pointers.size
-             + this.containers.size;
+        this.pointers   = {};
+        this.containers = {};
     };
 };
